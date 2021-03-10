@@ -1,0 +1,108 @@
+% Detta är ett program som beräknar en bollbana med
+% luftmotstånd och magnuseffekt givet känd utgångspos
+% och utgångsfart
+% skrivet med fysik specialisering
+% LÅ 2021
+
+clear all % Tömmer alla variabler
+close all % Stänger alla fönster 
+
+x0 = 0 ; # startposition i x-led
+y0 = 0 ; # startpostion i y-led
+z0 = 0;
+v0 = 10 ; %utgångsfart
+alfa0 = 30 ; % utkastsvinkel i grader
+
+alfa0 = alfa0*pi/180; #omräknar till radianer
+
+g = 9.82; #Tyngdaccelerationen i m/s^2
+
+# Luftmotståndskoeff i kg/s för golfdrive
+kL = 0.11 ; 
+
+# Magnuskoeff i kg/s för golfdrive 
+kM = 0.021;
+
+# Koeff för sidled
+kz = 0.1;
+
+# massan för en golfboll i kg
+m = 0.0459;
+
+# Vinkelhastigheten som en vektor.
+wvec = [100, 0, 0]
+
+# Definierar värden inför första iterationen i loopen
+x = x0;
+y = y0;
+z = z0;
+% Skapar tomma vektorer att lagra 
+% positionerna i 
+xvec = [];
+yvec = [];
+zvec = [];
+
+% Beräknar de första hastighetskomposanterna
+vx = v0*cos(alfa0);
+vy = v0*sin(alfa0);
+vz = 0;
+
+% Beräknar vi de första accelerationskomposanterna
+
+vvec = [vx, vy, vz];
+al = -vvec*norm(vvec) *kL;
+am = cross(wvec, vvec)*kM;
+a = al + [0, -g, 0] + am;
+
+# Tidssteget i sekunder
+dt = 0.01; 
+
+
+% Vi itererar så länge som y-värdet inte blir 
+% negativt
+
+while y >= 0 
+    
+    % Beräknar nya positioner
+    x = x + vx*dt;
+    y = y + vy*dt
+    z = z + vz*dt;
+
+    % Lagrar dessa i positionsvektorerna
+    xvec = [xvec x];
+    yvec = [yvec y];
+    zvec = [zvec z];
+
+    % Beräknar nya hastighetskomposanter
+    vx = vx + a(1)*dt;
+    vy = vy + a(2)*dt;
+    vz = vz + a(3)*dt;
+
+    % Beräknar fart och vinkel
+    v = sqrt(vx^2+vy^2);
+    alfa = atan(vy/vx);
+    
+    %ax = -kL*v/m*cos(alfa)-kM*v/m*sin(alfa);
+    %ay = -g - kL*v/m*sin(alfa) + kM*v/m*cos(alfa); 
+    
+    % Beräknar accelerationskomposanterna
+    vvec = [vx, vy, vz];
+    al = -vvec* norm(vvec)/m * kL;
+    am = cross(wvec, vvec)*kM;
+    a = al + [0, -g, 0] + am;
+end
+
+% Plottar positionerna som svarta punkter
+%plot3(xvec, zvec, yvec, 'k.')
+plot3(xvec, yvec, zvec, 'k.')
+xlabel ("x");
+ylabel ("y");
+zlabel ("z");
+% Gör skalstegen lika stora på x-axel och y-axel
+axis equal
+
+
+
+
+
+
