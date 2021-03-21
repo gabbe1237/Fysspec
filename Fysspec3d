@@ -1,9 +1,3 @@
-% Detta är ett program som beräknar en bollbana med
-% luftmotstånd och magnuseffekt givet känd utgångspos
-% och utgångsfart
-% skrivet med fysik specialisering
-% LÅ 2021
-
 clear all % Tömmer alla variabler
 close all % Stänger alla fönster 
 
@@ -11,7 +5,7 @@ x0 = 0 ; # startposition i x-led
 y0 = 0 ; # startpostion i y-led
 z0 = 0;
 v0 = 10 ; %utgångsfart
-alfa0 = 30 ; % utkastsvinkel i grader
+alfa0 = 20 ; % utkastsvinkel i grader
 
 alfa0 = alfa0*pi/180; #omräknar till radianer
 
@@ -26,11 +20,11 @@ kM = 0.021;
 # Koeff för sidled
 kz = 0.1;
 
-# massan för en golfboll i kg
+# massan
 m = 0.0459;
 
-# Vinkelhastigheten som en vektor.
-wvec = [100, 0, 0]
+# Vinkelhastigheten som en vektor
+wvec = [0, 10, 4]
 
 # Definierar värden inför första iterationen i loopen
 x = x0;
@@ -47,15 +41,14 @@ vx = v0*cos(alfa0);
 vy = v0*sin(alfa0);
 vz = 0;
 
-% Beräknar vi de första accelerationskomposanterna
-
+% Beräknar de första accelerationskomposanterna
 vvec = [vx, vy, vz];
-al = -vvec*norm(vvec) *kL;
-am = cross(wvec, vvec)*kM;
+al = -vvec*norm(vvec)/m *kL;
+am = cross(wvec, vvec)*kM/m;
 a = al + [0, -g, 0] + am;
 
 # Tidssteget i sekunder
-dt = 0.01; 
+dt = 0.001; 
 
 
 % Vi itererar så länge som y-värdet inte blir 
@@ -88,16 +81,16 @@ while y >= 0
     % Beräknar accelerationskomposanterna
     vvec = [vx, vy, vz];
     al = -vvec* norm(vvec)/m * kL;
-    am = cross(wvec, vvec)*kM;
+    am = cross(wvec, vvec)*kM/m;
     a = al + [0, -g, 0] + am;
 end
 
 % Plottar positionerna som svarta punkter
 %plot3(xvec, zvec, yvec, 'k.')
-plot3(xvec, yvec, zvec, 'k.')
+plot3(xvec, zvec, yvec, 'k.')
 xlabel ("x");
-ylabel ("y");
-zlabel ("z");
+ylabel ("z");
+zlabel ("y");
 % Gör skalstegen lika stora på x-axel och y-axel
 axis equal
 
