@@ -2,13 +2,17 @@
 <button id="cirklar" type="button">Cirklar</button>
 <button id="linjer" type="button">Linjer</button>
 <button id="start" type="button">Starta</button>
-<button id="börjaom" type="button">Börja om</button>
+<button onClick="window.location.reload();">Börja om</button>
 <button id="sc" type="button">Slumpmässiga cirklar</button>
 <input type="range" min="5" max="10" id="slider">
+<p>
+  För att rita dina egna linjer på canvasen nedan så trycker du på knappen "Linjer". Sedan vänstertrycker på en valfri punkt (som kommer vara den ena ändpunkten
+  för linjen) och håll in den knappen. Dra musen till en annan punkt och släpp vänsterknappen på din mus. Då bildas det en linje. Samma gäller för 
+  att rita cirklar. Slidern till höger ändrar inte hastigheten, utan hur många gånger tidsloopen körs per loop. Mer information hittas i koden.
+</p>
 <div>
   <canvas id="canvasNr1" width="1000" height="700" style="border:1px solid #d3d3d3;" />
 </div>
-
 
 <script>
 
@@ -61,14 +65,14 @@
   // Cirkel
 
   function Cirkel(x, y, r, blå, röd) {
-    if(r == undefined){
+    if(r === undefined){
       r = 2;
     }
     var H = document.getElementById('canvasNr1').height;
     context.beginPath();
     context.arc(x, H - y, r, 0, 2 * Math.PI);
     context.strokeStyle = "black";
-    context.lineWidth = r;
+    context.lineWidth = 2;
     context.stroke();
 
     //För att undvika att alla andra cirklar ska bli färgade. 
@@ -249,7 +253,8 @@
   var ay = a0y;
 
   // Tiden
-
+// 0.6 fel
+//0.5 rätt
   var tMax = 100;
   var dt = 0.01;                                   // Att stega fram tiden med.
   var visaSteg = 10;                             // Alla tidssteg kan inte visas. 
@@ -284,21 +289,6 @@
     räknastart++;
   })
 
-  document.getElementById("börjaom").addEventListener("click", function () {
-    context.fillStyle = "white";
-    context.fillRect(0, 0, bildVidd, bildHöjd);
-    clearInterval(intervall);
-    räknastart = 0;
-    x = x0;
-    y = y0;
-    vx = v0x;
-    vy = v0y;
-    ax = 0;
-    ay = 0;
-    ttemp = 0;
-    lc = [];
-    llinjer = [];
-  })
 
   function tidsLoop() {
     var vtot = Math.sqrt((vx) ** 2 + (vy) ** 2)
@@ -307,8 +297,8 @@
       clearInterval(intervall)
     }
     if (stegRäknare % visaSteg == 0) {
-      var blå = 255 * vtot * 0.3;
-      var röd = 255 / vtot * 15;
+      var blå = 255 * vtot * 0.2;
+      var röd = 255 / vtot * 11;
       Cirkel(x, y, 2, blå, röd);
       //Notera att en rosa färg indikerar att hastigheten är liten, en gul att hastigheten är väldigt liten och en blå att den är stor. 
     }
@@ -329,7 +319,6 @@
 
     if (vx < 0 & kl > 0) {
       kl = -kl;
-      km = -km;
     }
 
     if (vx > 0 & kl < 0) {
@@ -338,13 +327,11 @@
 
     var alfa = Math.atan(vy / vx);
 
-    ax = -kl * vtot ** 2 / m * Math.cos(alfa) - km * vtot / m * Math.sin(alfa);
-    ay = -g - kl * vtot ** 2 / m * Math.sin(alfa) + km * vtot / m * Math.cos(alfa);
+    ax = -kl * vtot**2  / m * Math.cos(alfa) - km * vtot / m * Math.sin(alfa);
+    ay = -g - kl * vtot**2  / m * Math.sin(alfa) + km * vtot / m * Math.cos(alfa);
 
     if (x >= bildVidd || x <= 0) {
       vx = -vx;
-      // kl = -kl;
-      // km = -km;
       // Tappar en viss andel rörelse energi vid en studs. 
       vx *= 0.85;
       km *= 0.1;
@@ -369,7 +356,7 @@
       }
 
       // För att partikeln inte ska "fastna" i en vägg. 
-      y = yförr;1
+      y = yförr;
     }
 
     //--------------------------
